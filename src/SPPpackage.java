@@ -2,36 +2,39 @@
 public class SPPpackage {
 	private int seqnr;
 	private short checksum;
-	private short flags;
+	private byte flags;
 	private byte[] data;
 	private int acknr;
 	
 	public void generateChecksum(){
 		
 	}
-	public void setAck(boolean value){
-		
+	public void setFlags(byte flags){
+		this.flags = flags;	
+	}
+	public void setAck(){
+		flags = (byte)(flags | (1 << 1));
 	}
 	public boolean isAck(){
-		
+		return (flags & (1 << 1))!=0 ;
 	}
-	public void setSyn(boolean value){
-		
+	public void setSyn(){
+			flags = (byte)(flags | 1);
 	}
 	public boolean isSyn(){
-		
+		return (flags & 1)!=0;
 	}
-	public void setRst(boolean value){
-		
+	public void setRst(){
+		flags = (byte)(flags | (1 << 2));
 	}
 	public boolean isRst(){
-		
+		return (flags & (1 << 2))!=0;
 	}
-	public void setFin(boolean value){
-		
+	public void setFin(){
+		flags = (byte)(flags | (1 << 3));
 	}
 	public boolean isFin(){
-		
+		return (flags & (1 << 3))!=0;
 	}
 	public int getAcknr() {
 		return acknr;
