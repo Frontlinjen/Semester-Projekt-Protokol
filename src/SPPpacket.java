@@ -1,5 +1,5 @@
 
-public class SPPpackage {
+public class SPPpacket {
 	private int seqnr;
 	private short checksum;
 	private byte flags;
