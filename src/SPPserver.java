@@ -3,27 +3,37 @@ import java.net.SocketException;
 import java.util.LinkedList;
 import java.util.List;
 
+
 public class SPPserver {
 	
+
+	int currentSeq = 0;
+	Node<SPPpackage> lastSentPacket;
+	LinkedList<SPPpackage> outBuffer = new LinkedList<SPPpackage>();
 	DatagramSocket socket = null;
-	List<SPPpackage> buffer = new LinkedList<SPPpackage>();
-	int seqack = 0;
-	int seqsent;
 	
-	public void OpenSocket(int port){
+	public void ListenSocket(int port){
 		try {
 			socket = new DatagramSocket(port);
 		} catch (SocketException e) {
 			System.out.println("Unable to open socket on port: " + port);
 			e.printStackTrace();
 		}
+	}
+	public SPPpackage SendData(Byte[] data){
+		try{
+			
+		}
+		catch(Exception e){
+			
+		}
+		return null;
+		}
+	
+	private void OnPacketAckTimeOut(Node<SPPpackage> id){
 		
 	}
-	
-	public void CreatePacket(byte[] data){
-		SPPpackage packet = new SPPpackage();
-		packet.setData(data);
-		packet.setSeqnr(0);
-	}
-	
 }
+	
+	
+
