@@ -23,7 +23,7 @@ public class SPPserver {
 	public void CreatePacket(byte[] data){
 		SPPpackage packet = new SPPpackage();
 		packet.setData(data);
-		packet.set   
+		packet.setSeqnr(0);
 	}
 	
 }
