@@ -1,18 +1,13 @@
 package SPP;
-import java.io.*;
-import java.net.*;
-import java.nio.Buffer;
-import java.util.List;
-
-import javax.xml.soap.Node;
-
 import utils.LinkedList;
+import utils.Node;
 
 public class SPPclient {
 	
 
-	LinkedList<SPPpacket> buffer = new LinkedList<SPPacket>();
-	Node<SPPpacket> readyPackagesIndex = new Node<SPPpacket>();
+	LinkedList<SPPpacket> buffer = new LinkedList<SPPpacket>();
+	Node<SPPpacket> readyPackagesIndex;
+	
 	int expectedSeq;
 	
 	public byte[] getNextPacketData(){
