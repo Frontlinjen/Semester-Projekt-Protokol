@@ -1,5 +1,9 @@
 package SPP;
 
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
+
 public class SPPpacket {
 	private int seqnr;
 	private short checksum;
@@ -54,5 +58,30 @@ public class SPPpacket {
 	}
 	public void setData(byte[] data) {
 		this.data = data;
+	}
+	public byte[] getByteStream(){
+		ByteBuffer b = ByteBuffer.allocate(19 /*length of our header*/ + data.length);
+		b.putInt(seqnr);
+		b.putInt(0);
+		
+		//skips the checksum by advancing two bytes. (calculated later)
+		b.position(4);
+		b.putInt(flags);
+		b.put(data);
+		short checksum = calculateChecksum();
+		//adds the checksum as the 3rd to 4th bytes
+		b.putShort(2, checksum);
+		return b.array();
+	}
+	private short calculateChecksum()
+	{
+		short checksum = 0;
+		checksum+=seqnr;
+		checksum+=flags;
+		for (byte c : data) {
+			checksum += 0 | c; // Converts the byte c into an int (0 is two bytes and the OR operator flips only the first byte)
+		}
+		System.out.println("Calculated checksum: " + checksum);
+		return checksum; 
 	}
 }
