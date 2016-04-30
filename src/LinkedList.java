@@ -50,6 +50,8 @@ public class LinkedList<T> {
 			n.prev.next = n.next;
 		if(n.next!=null)
 			n.next.prev = n.prev; 
+		if(n==head)
+			head = n.prev;
 	}
 	
 	public static void main(String[] args) {
@@ -59,6 +61,7 @@ public class LinkedList<T> {
 		list.insert(3);
 		list.insert(4);
 		list.insert(list.get(1), 5);
+		list.remove(list.get(0));	
 		
 		
 		Node<Integer> node = list.head;
