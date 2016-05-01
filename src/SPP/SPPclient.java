@@ -13,10 +13,10 @@ public class SPPclient {
 	Node<SPPpacket> readyPackagesIndex;
 	int expectedSeq;
 	DatagramSocket socket = null;
-	DatagramPacket packet;
+	DatagramPacket packet = new DatagramPacket(buffer.getHead().getByteStream, expectedSeq);
 	
 	public byte[] getNextPacketData(){
-		return null;
+		return packet.getData();
 		
 	}
 	
