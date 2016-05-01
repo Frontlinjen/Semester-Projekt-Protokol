@@ -17,11 +17,11 @@ public class LinkedList<T> {
 		{
 			head = newNode;
 		}
-		if(prev.next!=null)
+		else if(prev.next!=null)
 		{
 			prev.next.prev = newNode;
 		}
-		if(prev==null){
+		else{
 			tail.prev = newNode;
 			newNode.next = tail;
 			tail = newNode;
@@ -85,7 +85,7 @@ public class LinkedList<T> {
 		list.insert(4);
 		list.insert(list.get(1), 5);
 		list.insert(list.tail, 6);
-		list.insert(null, 7);
+		//list.insert(list.tail.prev, 7);
 		
 		Node<Integer> node = list.head;
 		while(node!=null)
