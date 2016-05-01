@@ -4,17 +4,51 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
-import utils.LinkedList;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import utils.LinkedList;
+import utils.Node;
+
+class SPPTimeout extends TimerTask
+{
+	SPPserver packetHandler;
+	DatagramPacket packet;
+	SPPTimeout(DatagramPacket packet, SPPserver reference)
+	{
+		this.packet = packet;
+		packetHandler = reference;
+	}
+	@Override
+	public void run() {
+		packetHandler.OnPacketAckTimeOut(packet);
+	}
+}
+class SeqTimerTuple
+{
+	public SeqTimerTuple(int seq, TimerTask task)
+	{
+		this.seq = seq;
+		this.task = task;
+	}
+	int seq;
+	public int getSeq() {
+		return seq;
+	}
+	public TimerTask getTask() {
+		return task;
+	}
+	TimerTask task;
+}
 
 public class SPPserver {
 	
-
+	Timer timeoutScheduler = new Timer();
 	int currentSeq = 0;
 	InetAddress dstIP;
 	int dstSocket;
 	SPPpacket lastSentPacket;
-	LinkedList<SPPpacket> outBuffer = new LinkedList<SPPpacket>();
+	LinkedList<SeqTimerTuple> outBuffer = new LinkedList<SeqTimerTuple>();
 	DatagramSocket socket = null;
 	
 	//Recieves ACK messages
@@ -31,18 +65,46 @@ public class SPPserver {
 			SPPpacket newPacket = new SPPpacket();
 			newPacket.setSeqnr(currentSeq);
 			newPacket.setData(data);
-			outBuffer.insert(newPacket);
 			byte[] packetBytes = newPacket.getByteStream();
-			DatagramPacket dp = new DatagramPacket(packetBytes, packetBytes.length, dstIP, dstSocket);			
-			try {
-				socket.send(dp);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			//Increase the seq to match the next packet
+			currentSeq += data.length;
+			
+			DatagramPacket dp = new DatagramPacket(packetBytes, packetBytes.length, dstIP, dstSocket);
+			TimerTask timeout = new SPPTimeout(dp, this);
+			SeqTimerTuple tuple = new SeqTimerTuple(newPacket.getSeqnr(), timeout);
+			outBuffer.insert(tuple);
+			//Sends the packet right away, then every 100th ms until an ACK is recieved 
+			timeoutScheduler.scheduleAtFixedRate(timeout, 0, 100);
 	}
-	
-	private void OnPacketAckTimeOut(SPPpacket id){
+	private void SendPacket(DatagramPacket dp)
+	{
+		try {
+			socket.send(dp);
+			System.out.println("Send packet to: " + dp.getAddress() + ":" + dp.getPort() + " length: " + dp.getLength());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	public void OnAckRecieved(int ack)
+	{
+		Node<SeqTimerTuple> node = outBuffer.getHead();
+		while(node!=null)
+		{
+			SeqTimerTuple obj = node.getKey();
+			if(obj.seq==ack)
+			{
+				obj.task.cancel();
+				outBuffer.remove(node);
+				System.out.println("Retransmission of node " + obj.seq + " ended!");
+				return;
+			}
+		}
+		System.out.println("Non-matching seq recieved! " + ack);
 		
+	}
+	public void OnPacketAckTimeOut(DatagramPacket dp){
+		//Resends packet
+		this.SendPacket(dp);
 	}
 }
 	
