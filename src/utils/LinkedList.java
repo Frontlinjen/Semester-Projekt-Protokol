@@ -68,6 +68,8 @@ public class LinkedList<T> {
 			n.next.prev = n.prev; 
 		if(n==head)
 			head = n.prev;
+		if(n==tail)
+			tail = n.next;
 	}
 	
 	public static void main(String[] args) {
@@ -77,11 +79,6 @@ public class LinkedList<T> {
 		list.insert(3);
 		list.insert(4);
 		list.insert(list.get(1), 5);
-		list.remove(list.get(0));	
-		
-		System.out.println(list.getHead().getKey());
-		System.out.println(list.getTail().getKey());
-		System.out.println();
 		
 		Node<Integer> node = list.head;
 		while(node!=null)
@@ -89,5 +86,16 @@ public class LinkedList<T> {
 			System.out.println(node.getKey());
 			node = node.prev;
 		}
+		
+		System.out.println();
+		System.out.println(list.getHead().getKey());
+		System.out.println(list.getTail().getKey());
+		System.out.println();
+		
+		list.remove(list.head);
+		list.remove(list.tail);
+		
+		System.out.println(list.getHead().getKey());
+		System.out.println(list.getTail().getKey());
 	}
 }
