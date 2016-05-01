@@ -8,7 +8,7 @@ public class LinkedList<T> {
 	
 	private Node<T> head;
 	//Indsætter en node i listen.
-	public void insert(Node<T> prev, T object){
+	public Node<T> insert(Node<T> prev, T object){
 		Node<T> newNode = new Node<T>(object, prev, prev.next);
 		//inserts an object at the tail
 		if(prev==null)
@@ -33,7 +33,7 @@ public class LinkedList<T> {
 			prev.next.prev = newNode;
 			prev.next = newNode;
 		}
-		
+		return newNode;
 		
 	}
 	
