@@ -7,19 +7,33 @@ package utils;
 public class LinkedList<T> {
 	
 	private Node<T> head;
-	
 	//Indsætter en node i listen.
 	public void insert(Node<T> prev, T object){
 		Node<T> newNode = new Node<T>(object, prev, prev.next);
+		//inserts an object at the tail
+		if(prev==null)
+		{
+			Node<T> tail = head;
+			while(tail.prev!=null)
+			{
+				tail = tail.prev;
+			}
+			newNode.next = tail;
+			tail.prev = newNode;
+		}
 		if(prev==head)
 		{
+			head.next = newNode;
+			newNode.prev = head;
 			head = newNode;
+			
 		}
 		if(prev.next!=null)
 		{
 			prev.next.prev = newNode;
+			prev.next = newNode;
 		}
-		prev.next = newNode;
+		
 		
 	}
 	
