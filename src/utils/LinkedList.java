@@ -17,9 +17,14 @@ public class LinkedList<T> {
 		{
 			head = newNode;
 		}
-		if(prev.next!=null)
+		else if(prev.next!=null)
 		{
 			prev.next.prev = newNode;
+		}
+		else{
+			tail.prev = newNode;
+			newNode.next = tail;
+			tail = newNode;
 		}
 		prev.next = newNode;
 		
@@ -57,6 +62,10 @@ public class LinkedList<T> {
 		return head;
 	}
 	
+	public Node<T> getTail(){
+		return tail;
+	}
+	
 	public void remove(Node<T> n){
 		if(n.prev!=null)
 			n.prev.next = n.next;
@@ -64,6 +73,8 @@ public class LinkedList<T> {
 			n.next.prev = n.prev; 
 		if(n==head)
 			head = n.prev;
+		if(n==tail)
+			tail = n.next;
 	}
 	
 	public static void main(String[] args) {
@@ -73,8 +84,8 @@ public class LinkedList<T> {
 		list.insert(3);
 		list.insert(4);
 		list.insert(list.get(1), 5);
-		list.remove(list.get(0));	
-		
+		list.insert(list.tail, 6);
+		//list.insert(list.tail.prev, 7);
 		
 		Node<Integer> node = list.head;
 		while(node!=null)
@@ -82,5 +93,16 @@ public class LinkedList<T> {
 			System.out.println(node.getKey());
 			node = node.prev;
 		}
+		
+		System.out.println();
+		System.out.println(list.getHead().getKey());
+		System.out.println(list.getTail().getKey());
+		System.out.println();
+		
+		list.remove(list.head);
+		list.remove(list.tail);
+		
+		System.out.println(list.getHead().getKey());
+		System.out.println(list.getTail().getKey());
 	}
 }
