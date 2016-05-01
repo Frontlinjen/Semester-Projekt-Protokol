@@ -52,7 +52,10 @@ public class LinkedList<T> {
 	public void insert(T object){
 		Node<T> newNode = new Node<T>(object, head, null);
 		if(head!=null)
+		{
 			head.next = newNode;
+			newNode.prev = head;
+		}
 		head = newNode;
 	}
 	
