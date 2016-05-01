@@ -21,6 +21,11 @@ public class LinkedList<T> {
 		{
 			prev.next.prev = newNode;
 		}
+		if(prev==null){
+			tail.prev = newNode;
+			newNode.next = tail;
+			tail = newNode;
+		}
 		prev.next = newNode;
 		
 	}
@@ -80,6 +85,7 @@ public class LinkedList<T> {
 		list.insert(4);
 		list.insert(list.get(1), 5);
 		list.insert(list.tail, 6);
+		list.insert(null, 7);
 		
 		Node<Integer> node = list.head;
 		while(node!=null)
