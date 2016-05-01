@@ -79,6 +79,7 @@ public class LinkedList<T> {
 		list.insert(3);
 		list.insert(4);
 		list.insert(list.get(1), 5);
+		list.insert(list.tail, 6);
 		
 		Node<Integer> node = list.head;
 		while(node!=null)
