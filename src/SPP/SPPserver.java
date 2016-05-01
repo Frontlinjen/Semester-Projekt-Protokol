@@ -75,6 +75,7 @@ public class SPPserver {
 			outBuffer.insert(tuple);
 			//Sends the packet right away, then every 100th ms until an ACK is recieved 
 			timeoutScheduler.scheduleAtFixedRate(timeout, 0, 100);
+			
 	}
 	private void SendPacket(DatagramPacket dp)
 	{
@@ -90,16 +91,21 @@ public class SPPserver {
 		Node<SeqTimerTuple> node = outBuffer.getHead();
 		while(node!=null)
 		{
-			SeqTimerTuple obj = node.getKey();
+			SeqTimerTuple obj = node.getKey()  ;
 			if(obj.seq==ack)
 			{
 				obj.task.cancel();
 				outBuffer.remove(node);
 				System.out.println("Retransmission of node " + obj.seq + " ended!");
+				
+				// 1 in 20 chance of removing depricated tasks from the list
+				if((Math.random()%20)==10)
+					timeoutScheduler.purge();
 				return;
 			}
 		}
 		System.out.println("Non-matching seq recieved! " + ack);
+		
 		
 	}
 	public void OnPacketAckTimeOut(DatagramPacket dp){
