@@ -11,8 +11,19 @@ public class SPPpacket {
 	private byte[] data;
 	private int acknr;
 	
-	public void generateChecksum(){
-		
+	public SPPpacket(byte[] byteData)
+	{
+		ByteBuffer instream = ByteBuffer.wrap(byteData);
+		seqnr = instream.getInt();
+		acknr = instream.getInt();
+		checksum = instream.getShort();
+		flags = instream.get();
+		data = new byte[byteData.length-19]; 
+		instream.get(data, instream.position(), byteData.length);
+	}
+	public SPPpacket()
+	{
+		//Default constructor
 	}
 	public void setFlags(byte flags){
 		this.flags = flags;	
