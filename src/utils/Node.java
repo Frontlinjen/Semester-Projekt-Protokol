@@ -1,6 +1,18 @@
 package utils;
 public class Node<T> {
-	T key;
+	private T key;
+	public T getKey() {
+		return key;
+	}
+
+	public Node<T> getPrev() {
+		return prev;
+	}
+
+	public Node<T> getNext() {
+		return next;
+	}
+
 	Node<T>prev;
 	Node<T> next;
 	
