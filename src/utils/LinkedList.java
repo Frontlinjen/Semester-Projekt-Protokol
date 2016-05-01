@@ -4,36 +4,24 @@ package utils;
 //					   ^
 //					   |
 //					 head
+
 public class LinkedList<T> {
 	
 	private Node<T> head;
+	private Node<T> tail;
+	
 	//Indsætter en node i listen.
-	public Node<T> insert(Node<T> prev, T object){
+	public void insert(Node<T> prev, T object){
 		Node<T> newNode = new Node<T>(object, prev, prev.next);
-		//inserts an object at the tail
-		if(prev==null)
-		{
-			Node<T> tail = head;
-			while(tail.prev!=null)
-			{
-				tail = tail.prev;
-			}
-			newNode.next = tail;
-			tail.prev = newNode;
-		}
 		if(prev==head)
 		{
-			head.next = newNode;
-			newNode.prev = head;
 			head = newNode;
-			
 		}
 		if(prev.next!=null)
 		{
 			prev.next.prev = newNode;
-			prev.next = newNode;
 		}
-		return newNode;
+		prev.next = newNode;
 		
 	}
 	
@@ -48,15 +36,21 @@ public class LinkedList<T> {
 		}
 		return n;
 	}
+	
 	//Tilføjer et objekt efter head.
 	public void insert(T object){
 		Node<T> newNode = new Node<T>(object, head, null);
-		if(head!=null)
-		{
-			head.next = newNode;
-			newNode.prev = head;
+		if(head==null){
+			head = newNode;
+			tail = newNode;
+			head.next = null;
+			tail.prev = null;
 		}
-		head = newNode;
+		else{
+			head.next = newNode;
+			head.next.prev = head;
+			head = newNode;
+		}	
 	}
 	
 	public Node<T> getHead(){
@@ -85,7 +79,7 @@ public class LinkedList<T> {
 		Node<Integer> node = list.head;
 		while(node!=null)
 		{
-			System.out.println(node.key);
+			System.out.println(node.getKey());
 			node = node.prev;
 		}
 	}
