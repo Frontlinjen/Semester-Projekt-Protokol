@@ -46,21 +46,18 @@ public class SPPserver {
 	Timer timeoutScheduler = new Timer();
 	int currentSeq = 0;
 	InetAddress dstIP;
-	int dstSocket;
+	int remotePort;
 	SPPpacket lastSentPacket;
 	LinkedList<SeqTimerTuple> outBuffer = new LinkedList<SeqTimerTuple>();
 	DatagramSocket socket = null;
 	
-	//Recieves ACK messages
-	public void ListenSocket(int port){
-		try {
-			
-			socket = new DatagramSocket(port);
-		} catch (SocketException e) {
-			System.out.println("Unable to open socket on port: " + port);
-			e.printStackTrace();
-		}
+	public SPPserver(InetAddress ip, int remotePort, DatagramSocket socket)
+	{
+		dstIP = ip;
+		this.remotePort = remotePort;
+		this.socket = socket;
 	}
+	
 	public void SendData(byte[] data){
 			SPPpacket newPacket = new SPPpacket();
 			newPacket.setSeqnr(currentSeq);
@@ -69,7 +66,7 @@ public class SPPserver {
 			//Increase the seq to match the next packet
 			currentSeq += data.length;
 			
-			DatagramPacket dp = new DatagramPacket(packetBytes, packetBytes.length, dstIP, dstSocket);
+			DatagramPacket dp = new DatagramPacket(packetBytes, packetBytes.length, remotePort);			
 			TimerTask timeout = new SPPTimeout(dp, this);
 			SeqTimerTuple tuple = new SeqTimerTuple(newPacket.getSeqnr(), timeout);
 			outBuffer.insert(tuple);

@@ -15,7 +15,7 @@ public class SPPclient {
 	Node<SPPpacket> readyPackagesEnd;
 	int expectedSeq = 0;
 	DatagramSocket socket = null;
-	final int MAX_PACKETSIZE = 2048;
+
 	
 	public byte[] getNextPacketData(){
 		return null;
@@ -51,26 +51,7 @@ public class SPPclient {
 		}
 		
 	}
-	public void listenPacket(int port){
-		try{
-			socket = new DatagramSocket(port);
-			byte[] inBuffer = new byte[MAX_PACKETSIZE];
-			DatagramPacket recievePacket = new DatagramPacket(inBuffer, inBuffer.length);
-			socket.receive(recievePacket);
-			
-			//Copies only the data recived and removed the nulls 
-			byte[] data = new byte[recievePacket.getLength()];
-			for (int i = 0; i < data.length; i++) {
-				data[i] = inBuffer[i];
-			}
-			SPPpacket newPacket = new SPPpacket(data);
-			addPacketToBuffer(newPacket);
-		}
-		catch(SocketException e){
-			System.out.println("Unable to open socket on port: " + port);
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public void recievePacket(SPPpacket p){
+		addPacketToBuffer(p);
 	}
 }
