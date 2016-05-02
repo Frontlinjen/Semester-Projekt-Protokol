@@ -70,7 +70,7 @@ public class SPPserver {
 			SeqTimerTuple tuple = new SeqTimerTuple(data.getSeqnr(), timeout);
 			outBuffer.insert(tuple);
 			//Sends the packet right away, then every 100th ms until an ACK is recieved 
-			timeoutScheduler.scheduleAtFixedRate(timeout, 0, 100);
+			timeoutScheduler.scheduleAtFixedRate(timeout, 0, 10000);
 			
 			System.out.println("package: " + data.getSeqnr() + " has been sent");
 			

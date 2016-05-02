@@ -11,7 +11,7 @@ public class SPPSocket {
 	private SPPserver server;
 	private DatagramSocket socket;
 	final int MAX_PACKETSIZE = 2048;
-	
+
 	public SPPSocket(DatagramSocket s, int remotePort, InetAddress address, int clientSeq)
 	{
 		socket = s;
@@ -23,7 +23,7 @@ public class SPPSocket {
 	{
 		this(localPort < 0 ? new DatagramSocket() : new DatagramSocket(localPort), remotePort, address, startSeq);
 	}
-	
+
 	public void sendData(byte[] data)
 	{
 		SPPpacket newPacket = new SPPpacket();
@@ -42,7 +42,7 @@ public class SPPSocket {
 	public SPPpacket getPacket()
 	{
 		SPPpacket p = null;
-		
+
 		do{
 			try
 			{
@@ -57,39 +57,40 @@ public class SPPSocket {
 					data[i] = inBuffer[i];
 				}
 				SPPpacket newPacket = new SPPpacket(data);
-				
+
 				if(newPacket.getChecksum() == newPacket.calculateChecksum()){
 					System.out.println("The checksum matches.");
-					
+
 					client.recievePacket(newPacket);
-					
+
 					SPPpacket newerpacket = new SPPpacket(data);
 					newerpacket.setAck();
 					newerpacket.setAcknr(newPacket.getSeqnr());
 					server.Send(newerpacket);
-					System.out.println("The following acknr has been sent: " + newerpacket);
 					
+					System.out.println("The following acknr has been sent: " + newerpacket);
+
 					if(newPacket.isAck())
 					{
 						server.OnAckRecieved(newPacket.getAcknr());
 						System.out.println("newPacket.isAck = " + newPacket.isAck() + " OnAckRecieved is executed with ackNr = " + newPacket.getAcknr());
 					}
-			}
+				}
 				else
 				{
 					System.out.println("The checksum didnt match!");
 				}
-		}
-		catch(IOException e)
-		{
-			System.out.println("Unable to get packet");
-			e.printStackTrace();
-		}
-	}while((p = client.getNextPacket())!= null);
-	
-	System.out.println("Returned packet " + p);
-	return p;
-		
+			}
+			catch(IOException e)
+			{
+				System.out.println("Unable to get packet");
+				e.printStackTrace();
+			}
+		}while((p = client.getNextPacket())== null);
+
+		System.out.println("Returned packet " + p);
+		return p;
+
 	}
 
 }

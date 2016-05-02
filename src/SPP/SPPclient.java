@@ -23,7 +23,11 @@ public class SPPclient {
 		expectedSeq = startSeq;
 	}
 	public SPPpacket getNextPacket(){
-		
+		if(buffer.getTail()==null)
+		{
+			System.out.println("Buffer was empty");
+			return null;
+		}
 		SPPpacket p = buffer.getTail().getKey();
 		System.out.println("Got packet: " + p.getSeqnr() + " Expected: " + expectedSeq);
 		if(p.getSeqnr() == expectedSeq){
@@ -40,6 +44,7 @@ public class SPPclient {
 		if(node==null)
 		{
 			System.out.println("Added as first element in buffer.");
+			buffer.insert(packet);
 			readyPackagesEnd = node;
 			return;
 		}	
