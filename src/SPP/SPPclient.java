@@ -38,7 +38,8 @@ public class SPPclient {
 				break;
 			}
 		}while((node = node.getNext())!=null);
-		Node<SPPpacket> n = buffer.insert(node, packet);
+		buffer.insert(node, packet);
+		Node<SPPpacket> n = buffer.getHead();
 		//if prev is null, then this is the first element in the buffer
 		if(n.getPrev()==null)
 		{
@@ -68,5 +69,9 @@ public class SPPclient {
 	{
 		
 	}	
+	
+	public void setSeqNr(int seqnr){
+		this.expectedSeq = seqnr;
+	}
 	
 }
