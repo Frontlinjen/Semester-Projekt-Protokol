@@ -32,10 +32,21 @@ class Server extends Thread{
 	public void run() {
 			try {
 				DatagramSocket server = new DatagramSocket(33000);
-				byte[] data = new byte[128];
-				DatagramPacket packet = new DatagramPacket(data, data.length);
+				byte[] inData = new byte[128];
+				DatagramPacket packet = new DatagramPacket(inData, inData.length);
 				server.receive(packet);
+				//Copies only the data recived and removed the nulls 
+				byte[] data = new byte[packet.getLength()];
+				for (int i = 0; i < data.length; i++) {
+					data[i] = inData[i];
+				}
+		
 				SPPpacket p = new SPPpacket(data);
+				for(byte b : p.getData())
+				{
+					System.out.print(b + " ");
+				}
+				System.out.print("\n");
 				String s = new String(p.getData());
 				System.out.println(s);
 			} catch (SocketException e) {
