@@ -78,5 +78,9 @@ public class SPPSocket {
 	
 		
 	}
+	
+	public void shutdown(){
+		socket.close();
+	}
 
 }
