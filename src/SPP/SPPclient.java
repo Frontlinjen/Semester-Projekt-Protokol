@@ -23,41 +23,51 @@ public class SPPclient {
 		expectedSeq = startSeq;
 	}
 	public SPPpacket getNextPacket(){
-		if(buffer.getTail().getNext().getKey().getSeqnr() == expectedSeq){
-			return buffer.getTail().getNext().getKey();
+		
+		SPPpacket p = buffer.getTail().getKey();
+		System.out.println("Got packet: " + p.getSeqnr() + " Expected: " + expectedSeq);
+		if(p.getSeqnr() == expectedSeq){
+			buffer.remove(buffer.getTail());
+			expectedSeq += p.getData().length;
+			return p;
 		}
 		return null;
 	}
 	private void addPacketToBuffer(SPPpacket packet)
 	{
+		System.out.println("Adding packet to buffer: " + packet.toString());
 		Node<SPPpacket> node = buffer.getHead();
+		if(node==null)
+		{
+			System.out.println("Added as first element in buffer.");
+			readyPackagesEnd = node;
+			return;
+		}	
 		do
 		{
 			if(node.getKey().getSeqnr() < packet.getSeqnr())
 			{
 				break;
 			}
+			
 		}while((node = node.getNext())!=null);
+		System.out.println("Element added");
 		buffer.insert(node, packet);
-		Node<SPPpacket> n = buffer.getHead();
-		//if prev is null, then this is the first element in the buffer
-		if(n.getPrev()==null)
-		{
-			readyPackagesEnd = n;
-		}
-		if(readyPackagesEnd.getKey().getSeqnr()!=expectedSeq)
-		{
-			return;
-		}
-		else 
-		{
-			do
-			{
-				//The seq nr matched, add one more available package for the application.
-				readyPackagesEnd = readyPackagesEnd.getNext();
-				expectedSeq = (readyPackagesEnd.getKey().getSeqnr()+readyPackagesEnd.getKey().getData().length)+1;
-			}while(expectedSeq==readyPackagesEnd.getNext().getKey().getSeqnr());
-		}
+		
+//		if(buffer.getTail()!=expectedSeq)
+//		{
+//			System.out.println("Got packet: " + buffer.getTail().getKey().getSeqnr() + " Expected: " + expectedSeq);
+//			return;
+//		}
+//		else 
+//		{
+//			do
+//			{
+//				//The seq nr matched, add one more available package for the application.
+//				readyPackagesEnd = readyPackagesEnd.getNext();
+//				expectedSeq = (readyPackagesEnd.getKey().getSeqnr()+readyPackagesEnd.getKey().getData().length)+1;
+//			}while(expectedSeq==readyPackagesEnd.getNext().getKey().getSeqnr());
+//		}
 	}
 		
 	
