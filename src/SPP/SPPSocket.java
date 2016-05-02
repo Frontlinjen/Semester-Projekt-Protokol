@@ -11,18 +11,25 @@ public class SPPSocket {
 	private SPPserver server;
 	private DatagramSocket socket;
 	final int MAX_PACKETSIZE = 2048;
-	public SPPSocket(int localPort, int removePort, InetAddress address)
+	public SPPSocket(DatagramSocket s, int remotePort, InetAddress address, int startSeq)
 	{
-		try {
-			
-			socket = new DatagramSocket(localPort);
-			server = new SPPserver()
-		} catch (SocketException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		socket = s;
+		server = new SPPserver(address, remotePort, s, startSeq);
 	}
-	
+	public SPPSocket(int localPort, int remotePort, InetAddress address, int startSeq) throws SocketException
+	{
+		this(new DatagramSocket(localPort), remotePort, address, startSeq);
+	}
+	public void sendData(byte[] data)
+	{
+		SPPpacket newPacket = new SPPpacket();
+		newPacket.setData(data);
+		sendPacket(newPacket);
+	}
+	public void sendPacket(SPPpacket p)
+	{
+		server.Send(p);
+	}
 	public SPPpacket getPacket()
 	{
 		try
