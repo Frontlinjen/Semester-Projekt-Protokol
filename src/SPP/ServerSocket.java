@@ -59,7 +59,7 @@ public class ServerSocket {
 				SPPpacket rstPacket = new SPPpacket();
 				rstPacket.setRst();
 				byte[] byteStream = rstPacket.getByteStream();
-				//The RST packet can be fire and forget, hence we dont need 
+				//The RST packet can be fire and forget, hence we don't need buffers
 				try {
 					socket.send(new DatagramPacket(byteStream, byteStream.length, recievePacket.getAddress(), recievePacket.getPort()));
 				} catch (IOException e) {
