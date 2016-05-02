@@ -15,7 +15,7 @@ public class SPPSocket {
 	public SPPSocket(DatagramSocket s, int remotePort, InetAddress address, int clientSeq)
 	{
 		socket = s;
-		server = new SPPserver(address, remotePort, s, (int)(Math.random()%Integer.MAX_VALUE));
+		server = new SPPserver(address, remotePort, s, 0);
 		client = new SPPclient(clientSeq);
 	}
 
@@ -50,7 +50,7 @@ public class SPPSocket {
 				byte[] inBuffer = new byte[MAX_PACKETSIZE];
 				DatagramPacket recievePacket = new DatagramPacket(inBuffer, inBuffer.length);
 				socket.receive(recievePacket);
-				System.out.println("Got datagram");
+				System.out.println("Got datagram from socket");
 				//Copies only the data received and removed the nulls 
 				byte[] data = new byte[recievePacket.getLength()];
 				for (int i = 0; i < data.length; i++) {

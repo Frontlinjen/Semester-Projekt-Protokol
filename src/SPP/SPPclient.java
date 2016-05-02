@@ -23,6 +23,7 @@ public class SPPclient {
 		expectedSeq = startSeq;
 	}
 	public SPPpacket getNextPacket(){
+		System.out.println("SPPclient: Getting package");
 		if(buffer.getTail()==null)
 		{
 			System.out.println("Buffer was empty");
@@ -30,12 +31,12 @@ public class SPPclient {
 		}
 		SPPpacket p = buffer.getTail().getKey();
 		System.out.println("Got packet: " + p.getSeqnr() + " Expected: " + expectedSeq);
-		if(p.getSeqnr() == expectedSeq){
+		//if(p.getSeqnr() == expectedSeq){
 			buffer.remove(buffer.getTail());
-			expectedSeq += p.getData().length;
+			expectedSeq += p.getData().length + 1;
 			return p;
-		}
-		return null;
+		//}
+		//return null;
 	}
 	private void addPacketToBuffer(SPPpacket packet)
 	{

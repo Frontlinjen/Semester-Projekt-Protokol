@@ -63,7 +63,7 @@ public class SPPserver {
 			data.setSeqnr(currentSeq);
 			byte[] packetBytes = data.getByteStream();
 			//Increase the seq to match the next packet
-			currentSeq += data.getData().length+1;
+			
 			
 			DatagramPacket dp = new DatagramPacket(packetBytes, packetBytes.length, dstIP, remotePort);
 			TimerTask timeout = new SPPTimeout(dp, this);
@@ -71,7 +71,7 @@ public class SPPserver {
 			outBuffer.insert(tuple);
 			//Sends the packet right away, then every 100th ms until an ACK is recieved 
 			timeoutScheduler.scheduleAtFixedRate(timeout, 0, 10000);
-			
+			currentSeq += data.getData().length;
 			System.out.println("package: " + data.getSeqnr() + " has been sent");
 			
 	}

@@ -12,21 +12,24 @@ public class LinkedList<T> {
 	
 	//Indsætter en node i listen.
 	public void insert(Node<T> prev, T object){
-		Node<T> newNode = new Node<T>(object, prev, prev.next);
+		Node<T> newNode = new Node<T>(object, prev, prev==null ? null : prev.next);
 		if(prev==head)
 		{
 			head = newNode;
+			prev.next = newNode;
 		}
-		else if(prev.next!=null)
+		else if(prev != null && prev.next!=null)
 		{
 			prev.next.prev = newNode;
+			prev.next = newNode;
 		}
 		else{
-			tail.prev = newNode;
+			if(tail!=null)
+				tail.prev = newNode;
 			newNode.next = tail;
 			tail = newNode;
 		}
-		prev.next = newNode;
+		
 		
 	}
 	

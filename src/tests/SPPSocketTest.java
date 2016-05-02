@@ -18,7 +18,7 @@ public class SPPSocketTest {
 		ClientSocket socket = new ClientSocket("localhost", 33000);
 		socket.connect();
 		socket.sendData("Test".getBytes());
-		
+				
 	}
 	
 
