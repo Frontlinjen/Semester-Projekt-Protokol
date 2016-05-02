@@ -67,4 +67,8 @@ public class ClientSocket {
 				e.printStackTrace();
 			}	
 		}
+		
+		public void shutdown(){
+			socket.close();
+		}
 }

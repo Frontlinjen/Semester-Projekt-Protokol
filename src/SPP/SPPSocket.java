@@ -92,5 +92,9 @@ public class SPPSocket {
 		return p;
 
 	}
+	
+	public void shutdown(){
+		socket.close();
+	}
 
 }
