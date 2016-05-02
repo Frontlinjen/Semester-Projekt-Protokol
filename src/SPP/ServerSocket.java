@@ -7,8 +7,8 @@ import java.net.SocketException;
 
 public class ServerSocket {
 
-	DatagramSocket socket = null;
-	SPPSocket connection = null;
+	private DatagramSocket socket = null;
+	private SPPSocket connection = null;
 	public ServerSocket(int port)
 	{
 		try {
@@ -19,8 +19,23 @@ public class ServerSocket {
 		}
 	}
 	
+	public boolean isConnected()
+	{
+		return connection!=null;
+	}
 	
-	public void accept()
+	public byte[] getData()
+	{
+		SPPpacket p = connection.getPacket();
+		return p.getData();
+	}
+	public void sendData(byte[] data)
+	{
+		connection.sendData(data);
+	}
+	
+	
+	public void connect()
 	{
 		SPPpacket newPacket = null;
 		DatagramPacket recievePacket = null;
