@@ -43,11 +43,11 @@ public class ServerSocket {
 		do
 		{
 			byte[] inBuffer = new byte[2048];
-			System.out.println("byte[] made");
 			recievePacket = new DatagramPacket(inBuffer, inBuffer.length);
-			System.out.println("Datagrampacket received.");
+			
 			try {
 				socket.receive(recievePacket);
+				System.out.println("Datagrampacket received.");
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
