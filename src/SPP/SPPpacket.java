@@ -28,6 +28,9 @@ public class SPPpacket {
 	public void setFlags(byte flags){
 		this.flags = flags;	
 	}
+	public short getChecksum(){
+		return calculateChecksum();
+	}
 	public void setAck(){
 		flags = (byte)(flags | (1 << 1));
 	}
@@ -84,7 +87,7 @@ public class SPPpacket {
 		b.putShort(2, checksum);
 		return b.array();
 	}
-	private short calculateChecksum()
+	public short calculateChecksum()
 	{
 		short checksum = 0;
 		checksum+=seqnr;

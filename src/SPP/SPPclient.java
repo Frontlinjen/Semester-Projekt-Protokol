@@ -5,6 +5,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 
+import SPP.SPPpacket;
 import utils.LinkedList;
 import utils.Node;
 
@@ -15,6 +16,7 @@ public class SPPclient {
 	Node<SPPpacket> readyPackagesEnd;
 	int expectedSeq = 0;
 	DatagramSocket socket = null;
+	SPPpacket packet = new SPPpacket();
 
 	
 	public byte[] getNextPacketData(){
@@ -49,9 +51,18 @@ public class SPPclient {
 				expectedSeq = (readyPackagesEnd.getKey().getSeqnr()+readyPackagesEnd.getKey().getData().length)+1;
 			}while(expectedSeq==readyPackagesEnd.getNext().getKey().getSeqnr());
 		}
+	}
 		
-	}
+	
 	public void recievePacket(SPPpacket p){
-		addPacketToBuffer(p);
+		if(p.getChecksum() == p.calculateChecksum()){
+			addPacketToBuffer(p);	
+		}	
 	}
+	
+	public void sendACK(int ack)
+	{
+		
+	}	
+	
 }

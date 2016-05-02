@@ -15,7 +15,9 @@ public class SPPSocket {
 	{
 		socket = s;
 		server = new SPPserver(address, remotePort, s, startSeq);
+		client = new SPPclient();
 	}
+
 	public SPPSocket(int localPort, int remotePort, InetAddress address, int startSeq) throws SocketException
 	{
 		this(new DatagramSocket(localPort), remotePort, address, startSeq);
@@ -38,7 +40,7 @@ public class SPPSocket {
 			DatagramPacket recievePacket = new DatagramPacket(inBuffer, inBuffer.length);
 			socket.receive(recievePacket);
 			
-			//Copies only the data recived and removed the nulls 
+			//Copies only the data received and removed the nulls 
 			byte[] data = new byte[recievePacket.getLength()];
 			for (int i = 0; i < data.length; i++) {
 				data[i] = inBuffer[i];
@@ -52,7 +54,9 @@ public class SPPSocket {
 		}
 		catch(IOException e)
 		{
-			
+			System.out.println("Unable to get packet");
+			e.printStackTrace();
 		}
+		return null;
 	}
 }
