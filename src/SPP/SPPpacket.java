@@ -10,7 +10,16 @@ public class SPPpacket {
 	private byte flags;
 	private byte[] data;
 	private int acknr;
-	
+	public byte[] getByteStream(){
+		ByteBuffer b = ByteBuffer.allocate(19 /*length of our header*/ + data.length);
+		b.putInt(seqnr);
+		b.putInt(0);
+		short checksum = calculateChecksum();
+		b.putShort(checksum);
+		b.putInt(flags);
+		b.put(data);
+		return b.array();
+	}
 	public SPPpacket(byte[] byteData)
 	{
 		ByteBuffer instream = ByteBuffer.wrap(byteData);
@@ -18,8 +27,9 @@ public class SPPpacket {
 		acknr = instream.getInt();
 		checksum = instream.getShort();
 		flags = instream.get();
-		data = new byte[byteData.length-19]; 
-		instream.get(data, instream.position(), byteData.length);
+		data = new byte[instream.remaining()]; 
+		System.out.println("Moving " + (instream.remaining()) + " bytes to buffer out of: " + byteData.length);
+		instream.get(data, 0, instream.remaining());
 	}
 	public SPPpacket()
 	{
@@ -73,20 +83,7 @@ public class SPPpacket {
 	public void setData(byte[] data) {
 		this.data = data;
 	}
-	public byte[] getByteStream(){
-		ByteBuffer b = ByteBuffer.allocate(19 /*length of our header*/ + data.length);
-		b.putInt(seqnr);
-		b.putInt(0);
-		
-		//skips the checksum by advancing two bytes. (calculated later)
-		b.position(4);
-		b.putInt(flags);
-		b.put(data);
-		short checksum = calculateChecksum();
-		//adds the checksum as the 3rd to 4th bytes
-		b.putShort(2, checksum);
-		return b.array();
-	}
+	
 	public short calculateChecksum()
 	{
 		short checksum = 0;
