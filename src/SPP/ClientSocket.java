@@ -1,40 +1,66 @@
 package SPP;
 
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.util.Scanner;
-
+import java.net.UnknownHostException;
 import SPP.SPPSocket;
-
 
 public class ClientSocket {
 	
 	//SYN til ipadresse, indtil den får SYNACK tilbage, derefter skal den oprette en
 		//SPP socket så den kan snakke med serveren.
 		
-		public void sendSyn(){
-			String serverName = "SPP";
-			int serverPort = 8080;
-			byte[] IP = new byte[]{127, 0, 0, 1};
-			InetAddress dstIP = InetAddress.getByAddress(IP);
-			int localPort;
-			
-			System.out.println("Skriv det portnummer du ønsker at forbinde fra.");
-			Scanner sc = new Scanner(System.in);
-			localPort = sc.nextInt();
-			sc.close();
+		DatagramSocket socket = null;
+		SPPSocket connection = null;
+		int remotePort;
+		InetAddress remoteIp;
+		
+		
+		public ClientSocket(String ip, int port){
+			this.remotePort = port;
 			try {
-				SPPSocket clientSocket = new SPPSocket(localPort, 8080, dstIP);
-				SPPpacket packet = new SPPpacket();
-				packet.setSyn();
-				clientSocket.send(packet);
-			} catch (IOException e) {
-				System.out.println("Fejl i oprettelse af forbindelsen.");
+				this.remoteIp = InetAddress.getByName(ip);
+			} catch (UnknownHostException e) {
 				e.printStackTrace();
 			}
 		}
 		
-		public void sendAck(){
-			
+		public boolean isConnected()
+		{
+			return connection!=null;
+		}
+		
+		public byte[] getData()
+		{
+			SPPpacket p = connection.getPacket();
+			return p.getData();
+		}
+		public void sendData(byte[] data)
+		{
+			connection.sendData(data);
+		}
+		
+		public void connect(){
+			try {
+				SPPSocket clientSocket = new SPPSocket(-1, 8080, remoteIp, 0);
+				SPPpacket packet = new SPPpacket();
+				packet.setSyn();
+				packet.setSeqnr((int)Math.random()%Integer.MAX_VALUE);
+				clientSocket.sendPacket(packet);
+				SPPpacket Acknr;
+				do{
+					Acknr = clientSocket.getPacket();
+				}
+				while(!Acknr.isSyn() || Acknr.isRst());
+				if(Acknr.isRst()){
+					return;
+				}
+				connection = clientSocket;
+			} catch (IOException e) {
+				System.out.println("Fejl i oprettelse af forbindelsen.");
+				e.printStackTrace();
+			}	
 		}
 }
