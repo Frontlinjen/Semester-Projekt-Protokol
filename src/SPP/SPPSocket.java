@@ -9,6 +9,7 @@ import java.net.SocketException;
 public class SPPSocket {
 	private SPPclient client;
 	private SPPserver server;
+	private SPPpacket packet;
 	private DatagramSocket socket;
 	final int MAX_PACKETSIZE = 2048;
 	public SPPSocket(DatagramSocket s, int remotePort, InetAddress address, int clientSeq)
@@ -20,7 +21,7 @@ public class SPPSocket {
 
 	public SPPSocket(int localPort, int remotePort, InetAddress address, int startSeq) throws SocketException
 	{
-		this(new DatagramSocket(localPort), remotePort, address, startSeq);
+		this(localPort < 0 ? new DatagramSocket() : new DatagramSocket(localPort), remotePort, address, startSeq);
 	}
 	public void sendData(byte[] data)
 	{
@@ -34,6 +35,7 @@ public class SPPSocket {
 	}
 	public SPPpacket getPacket()
 	{
+		do{
 		try
 		{
 			byte[] inBuffer = new byte[MAX_PACKETSIZE];
@@ -46,10 +48,14 @@ public class SPPSocket {
 				data[i] = inBuffer[i];
 			}
 			SPPpacket newPacket = new SPPpacket(data);
-			client.recievePacket(newPacket);
+			
+			if(packet.getChecksum() == packet.calculateChecksum()){
+			
+				client.recievePacket(newPacket);
 			if(newPacket.isAck())
 			{
 				server.OnAckRecieved(newPacket.getAcknr());
+			}
 			}
 		}
 		catch(IOException e)
@@ -59,4 +65,9 @@ public class SPPSocket {
 		}
 		return null;
 	}
+		while(client.getNextPacket()!= null);
+	
+		
+	}
+
 }
