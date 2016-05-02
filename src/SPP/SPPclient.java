@@ -54,4 +54,12 @@ public class SPPclient {
 	public void recievePacket(SPPpacket p){
 		addPacketToBuffer(p);
 	}
+	
+	public void sendACK(int ack)
+	{
+		
+	}
+	
+	
+	
 }
