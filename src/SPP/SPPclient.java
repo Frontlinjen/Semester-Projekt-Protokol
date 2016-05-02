@@ -18,7 +18,10 @@ public class SPPclient {
 	DatagramSocket socket = null;
 	SPPpacket packet = new SPPpacket();
 
-	
+	public SPPclient(int startSeq)
+	{
+		expectedSeq = startSeq;
+	}
 	public byte[] getNextPacketData(){
 		return null;
 	}
