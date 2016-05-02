@@ -16,7 +16,7 @@ public class SPPSocket {
 		try {
 			
 			socket = new DatagramSocket(localPort);
-			server = new SPPserver()
+			server = new SPPserver(address, removePort, socket);
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -41,11 +41,14 @@ public class SPPSocket {
 			if(newPacket.isAck())
 			{
 				server.OnAckRecieved(newPacket.getAcknr());
+				return newPacket;
 			}
 		}
 		catch(IOException e)
 		{
-			
+			System.out.println("Unable to get packet");
+			e.printStackTrace();
 		}
+		return null;
 	}
 }
