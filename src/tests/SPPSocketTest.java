@@ -6,6 +6,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 
+import SPP.SPPSocket;
 import SPP.SPPpacket;
 
 public class SPPSocketTest {
@@ -13,14 +14,14 @@ public class SPPSocketTest {
 
 	public static void main(String[]args) throws IOException{
 		(new Server2()).start();
-		DatagramSocket socket = new DatagramSocket(32000);
+		SPPSocket socket = new SPPSocket(-1, 32000, InetAddress.getByName("localhost"), 1);
 		SPPpacket spp = new SPPpacket();
 		spp.setData("Test".getBytes());
 		byte[] data = spp.getByteStream();
 		DatagramPacket packet = new DatagramPacket(data, data.length);
 		packet.setPort(33000);
 		packet.setAddress(InetAddress.getByName("localhost"));
-		socket.send(packet);
+		socket.sendPacket(spp);
 		
 	}
 	
