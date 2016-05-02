@@ -14,7 +14,7 @@ class SPPTimeout extends TimerTask
 {
 	SPPserver packetHandler;
 	DatagramPacket packet;
-	SPPTimeout(DatagramPacket packet, SPPserver reference)
+	public SPPTimeout(DatagramPacket packet, SPPserver reference)
 	{
 		this.packet = packet;
 		packetHandler = reference;
@@ -51,24 +51,23 @@ public class SPPserver {
 	LinkedList<SeqTimerTuple> outBuffer = new LinkedList<SeqTimerTuple>();
 	DatagramSocket socket = null;
 	
-	public SPPserver(InetAddress ip, int remotePort, DatagramSocket socket)
+	public SPPserver(InetAddress ip, int remotePort, DatagramSocket socket, int startSeq)
 	{
+		currentSeq = startSeq;
 		dstIP = ip;
 		this.remotePort = remotePort;
 		this.socket = socket;
 	}
 	
-	public void SendData(byte[] data){
-			SPPpacket newPacket = new SPPpacket();
-			newPacket.setSeqnr(currentSeq);
-			newPacket.setData(data);
-			byte[] packetBytes = newPacket.getByteStream();
+	public void Send(SPPpacket data){
+			data.setSeqnr(currentSeq);
+			byte[] packetBytes = data.getByteStream();
 			//Increase the seq to match the next packet
-			currentSeq += data.length;
+			currentSeq += data.getData().length;
 			
 			DatagramPacket dp = new DatagramPacket(packetBytes, packetBytes.length, remotePort);			
 			TimerTask timeout = new SPPTimeout(dp, this);
-			SeqTimerTuple tuple = new SeqTimerTuple(newPacket.getSeqnr(), timeout);
+			SeqTimerTuple tuple = new SeqTimerTuple(data.getSeqnr(), timeout);
 			outBuffer.insert(tuple);
 			//Sends the packet right away, then every 100th ms until an ACK is recieved 
 			timeoutScheduler.scheduleAtFixedRate(timeout, 0, 100);
