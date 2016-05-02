@@ -65,7 +65,8 @@ public class SPPserver {
 			//Increase the seq to match the next packet
 			currentSeq += data.getData().length;
 			
-			DatagramPacket dp = new DatagramPacket(packetBytes, packetBytes.length, remotePort);			
+			DatagramPacket dp = new DatagramPacket(packetBytes, packetBytes.length, remotePort);
+			dp.setAddress(dstIP);
 			TimerTask timeout = new SPPTimeout(dp, this);
 			SeqTimerTuple tuple = new SeqTimerTuple(data.getSeqnr(), timeout);
 			outBuffer.insert(tuple);
