@@ -70,4 +70,8 @@ public class SPPclient {
 		
 	}	
 	
+	public void setSeqNr(int seqnr){
+		this.expectedSeq = seqnr;
+	}
+	
 }
