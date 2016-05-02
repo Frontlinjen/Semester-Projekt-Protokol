@@ -21,7 +21,7 @@ public class SPPSocket {
 
 	public SPPSocket(int localPort, int remotePort, InetAddress address, int startSeq) throws SocketException
 	{
-		this(new DatagramSocket(localPort), remotePort, address, startSeq);
+		this(localPort < 0 ? new DatagramSocket() : new DatagramSocket(localPort), remotePort, address, startSeq);
 	}
 	public void sendData(byte[] data)
 	{
