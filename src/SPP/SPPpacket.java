@@ -87,7 +87,7 @@ public class SPPpacket {
 		b.putShort(2, checksum);
 		return b.array();
 	}
-	private short calculateChecksum()
+	public short calculateChecksum()
 	{
 		short checksum = 0;
 		checksum+=seqnr;
