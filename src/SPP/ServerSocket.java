@@ -44,7 +44,11 @@ public class ServerSocket {
 		{
 			byte[] inBuffer = new byte[2048];
 			recievePacket = new DatagramPacket(inBuffer, inBuffer.length);
-			socket.receive(recievePacket);
+			try {
+				socket.receive(recievePacket);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 			
 			//Copies only the data recived and removed the nulls 
 			byte[] data = new byte[recievePacket.getLength()];

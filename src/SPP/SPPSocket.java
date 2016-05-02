@@ -52,6 +52,12 @@ public class SPPSocket {
 			if(packet.getChecksum() == packet.calculateChecksum()){
 			
 				client.recievePacket(newPacket);
+				
+				SPPpacket newerpacket = new SPPpacket(data);
+				newerpacket.setAck();
+				newerpacket.setAcknr(newPacket.getSeqnr());
+				server.Send(newerpacket);
+				
 			if(newPacket.isAck())
 			{
 				server.OnAckRecieved(newPacket.getAcknr());
