@@ -11,11 +11,11 @@ public class SPPSocket {
 	private SPPserver server;
 	private DatagramSocket socket;
 	final int MAX_PACKETSIZE = 2048;
-	public SPPSocket(DatagramSocket s, int remotePort, InetAddress address, int startSeq)
+	public SPPSocket(DatagramSocket s, int remotePort, InetAddress address, int clientSeq)
 	{
 		socket = s;
-		server = new SPPserver(address, remotePort, s, startSeq);
-		client = new SPPclient();
+		server = new SPPserver(address, remotePort, s, (int)(Math.random()%Integer.MAX_VALUE));
+		client = new SPPclient(clientSeq);
 	}
 
 	public SPPSocket(int localPort, int remotePort, InetAddress address, int startSeq) throws SocketException
