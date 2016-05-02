@@ -72,6 +72,8 @@ public class SPPserver {
 			//Sends the packet right away, then every 100th ms until an ACK is recieved 
 			timeoutScheduler.scheduleAtFixedRate(timeout, 0, 100);
 			
+			System.out.println("package: " + data.getSeqnr() + " has been sent");
+			
 	}
 	private void SendPacket(DatagramPacket dp)
 	{
