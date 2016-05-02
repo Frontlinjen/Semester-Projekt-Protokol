@@ -28,8 +28,8 @@ public class SPPpacket {
 	public void setFlags(byte flags){
 		this.flags = flags;	
 	}
-	public void getChecksum(){
-		this.calculateChecksum();
+	public short getChecksum(){
+		return calculateChecksum();
 	}
 	public void setAck(){
 		flags = (byte)(flags | (1 << 1));
