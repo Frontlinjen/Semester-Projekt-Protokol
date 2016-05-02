@@ -98,4 +98,8 @@ public class ServerSocket {
 			
 	}
 	
+	public void shutdown(){
+		socket.close();
+	}
+	
 }
