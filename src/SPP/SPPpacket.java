@@ -8,7 +8,7 @@ public class SPPpacket {
 	private int seqnr;
 	private short checksum;
 	private byte flags;
-	private byte[] data;
+	private byte[] data = new byte[0];
 	private int acknr;
 	public byte[] getByteStream(){
 		ByteBuffer b = ByteBuffer.allocate(11 /*length of our header*/ + data.length);
