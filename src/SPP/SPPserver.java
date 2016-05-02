@@ -63,7 +63,7 @@ public class SPPserver {
 			data.setSeqnr(currentSeq);
 			byte[] packetBytes = data.getByteStream();
 			//Increase the seq to match the next packet
-			currentSeq += data.getData().length;
+			currentSeq += data.getData().length+1;
 			
 			DatagramPacket dp = new DatagramPacket(packetBytes, packetBytes.length, dstIP, remotePort);
 			TimerTask timeout = new SPPTimeout(dp, this);
@@ -97,10 +97,11 @@ public class SPPserver {
 				System.out.println("Retransmission of node " + obj.seq + " ended!");
 				
 				// 1 in 20 chance of removing depricated tasks from the list
-				if((Math.random()%20)==10)
+				if((Math.random()*20)==10)
 					timeoutScheduler.purge();
 				return;
 			}
+			node = node.getPrev();
 		}
 		System.out.println("Non-matching seq recieved! " + ack);
 		
