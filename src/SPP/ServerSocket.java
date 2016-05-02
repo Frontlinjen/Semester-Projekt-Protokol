@@ -44,8 +44,10 @@ public class ServerSocket {
 		{
 			byte[] inBuffer = new byte[2048];
 			recievePacket = new DatagramPacket(inBuffer, inBuffer.length);
+			
 			try {
 				socket.receive(recievePacket);
+				System.out.println("Datagrampacket received.");
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
@@ -56,6 +58,7 @@ public class ServerSocket {
 				data[i] = inBuffer[i];
 			}
 			newPacket = new SPPpacket(data);
+			System.out.println("SPPpacket made from the received packet");
 			//If not a syn packet, ask them to try and reconnect!
 			if(!newPacket.isSyn())
 			{
@@ -79,6 +82,7 @@ public class ServerSocket {
 			packet.setSyn();
 			//Sends SYN-ACK
 			connection.sendPacket(packet);
+			System.out.println("Connection made and a packet is send with ack and syn");
 			
 			SPPpacket ackPacket;
 			do
@@ -90,6 +94,7 @@ public class ServerSocket {
 			if(ackPacket.isRst())
 			{
 				connection = null;
+				System.out.println("packet is reset");
 			}
 			else
 			{
