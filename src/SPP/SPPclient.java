@@ -22,7 +22,10 @@ public class SPPclient {
 	{
 		expectedSeq = startSeq;
 	}
-	public byte[] getNextPacketData(){
+	public SPPpacket getNextPacket(){
+		if(buffer.getTail().getNext().getKey().getSeqnr() == expectedSeq){
+			return buffer.getTail().getNext().getKey();
+		}
 		return null;
 	}
 	private void addPacketToBuffer(SPPpacket packet)
@@ -58,9 +61,7 @@ public class SPPclient {
 		
 	
 	public void recievePacket(SPPpacket p){
-		if(p.getChecksum() == p.calculateChecksum()){
 			addPacketToBuffer(p);	
-		}	
 	}
 	
 	public void sendACK(int ack)
