@@ -11,12 +11,12 @@ public class SPPpacket {
 	private byte[] data;
 	private int acknr;
 	public byte[] getByteStream(){
-		ByteBuffer b = ByteBuffer.allocate(19 /*length of our header*/ + data.length);
+		ByteBuffer b = ByteBuffer.allocate(11 /*length of our header*/ + data.length);
 		b.putInt(seqnr);
 		b.putInt(0);
 		short checksum = calculateChecksum();
 		b.putShort(checksum);
-		b.putInt(flags);
+		b.put(flags);
 		b.put(data);
 		return b.array();
 	}
