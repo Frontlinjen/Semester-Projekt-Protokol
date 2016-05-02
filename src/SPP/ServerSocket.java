@@ -8,7 +8,7 @@ import java.net.SocketException;
 public class ServerSocket {
 
 	DatagramSocket socket = null;
-	
+	SPPSocket connection = null;
 	public ServerSocket(int port)
 	{
 		try {
@@ -18,7 +18,9 @@ public class ServerSocket {
 			e.printStackTrace();
 		}
 	}
-	public SPPSocket accept()
+	
+	
+	public void accept()
 	{
 		SPPpacket newPacket = null;
 		DatagramPacket recievePacket = null;
@@ -51,11 +53,30 @@ public class ServerSocket {
 				}
 			}
 		}while(!newPacket.isSyn());
-		do
-		{
-			SPPSocket connection = new SPPSocket(socket, recievePacket.getPort(), recievePacket.getAddress(), (int)(Math.random()%Integer.MAX_VALUE));
-		}while(true);
-		System.out.println();
+			connection = new SPPSocket(socket, recievePacket.getPort(), recievePacket.getAddress(),  newPacket.getSeqnr());
+			SPPpacket packet = new SPPpacket();
+			packet.setAck();
+			packet.setAcknr(newPacket.getSeqnr());
+			packet.setSyn();
+			//Sends SYN-ACK
+			connection.sendPacket(packet);
+			
+			SPPpacket ackPacket;
+			do
+			{
+				ackPacket = connection.getPacket();
+			}while(!ackPacket.isAck() || ackPacket.isRst());
+			
+			//Resets connection
+			if(ackPacket.isRst())
+			{
+				connection = null;
+			}
+			else
+			{
+				System.out.println("Connection established to: " + recievePacket.getAddress());
+			}
+			
 	}
 	
 }
