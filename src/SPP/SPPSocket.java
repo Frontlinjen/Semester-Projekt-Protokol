@@ -16,14 +16,14 @@ public class SPPSocket {
 		try {
 			
 			socket = new DatagramSocket(localPort);
-			server = new SPPserver()
+			server = new SPPserver(address, removePort, socket);
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	public SPPpacket getPacket()
+	public byte[] getData()
 	{
 		try
 		{
@@ -31,7 +31,7 @@ public class SPPSocket {
 			DatagramPacket recievePacket = new DatagramPacket(inBuffer, inBuffer.length);
 			socket.receive(recievePacket);
 			
-			//Copies only the data recived and removed the nulls 
+			//Copies only the data received and removed the nulls 
 			byte[] data = new byte[recievePacket.getLength()];
 			for (int i = 0; i < data.length; i++) {
 				data[i] = inBuffer[i];
@@ -41,11 +41,14 @@ public class SPPSocket {
 			if(newPacket.isAck())
 			{
 				server.OnAckRecieved(newPacket.getAcknr());
+				return data;
 			}
 		}
 		catch(IOException e)
 		{
-			
+			System.out.println("Unable to get packet");
+			e.printStackTrace();
 		}
+		return null;
 	}
 }
