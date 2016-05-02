@@ -51,6 +51,7 @@ public class SPPclient {
 				expectedSeq = (readyPackagesEnd.getKey().getSeqnr()+readyPackagesEnd.getKey().getData().length)+1;
 			}while(expectedSeq==readyPackagesEnd.getNext().getKey().getSeqnr());
 		}
+	}
 		
 	
 	public void recievePacket(SPPpacket p){
