@@ -95,4 +95,9 @@ public class SPPpacket {
 		System.out.println("Calculated checksum: " + checksum);
 		return checksum; 
 	}
+	
+	public String toString(){
+		String s = new String("Flags: \n Ack: " + isAck() + ", Syn: " + isSyn() + ", Rst: " + isRst() + ", Fin: " + isFin() + ", Length: " + data.length);
+		return s;
+	}
 }
