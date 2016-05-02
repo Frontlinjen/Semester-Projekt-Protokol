@@ -9,7 +9,6 @@ import java.net.SocketException;
 public class SPPSocket {
 	private SPPclient client;
 	private SPPserver server;
-	private SPPpacket packet;
 	private DatagramSocket socket;
 	final int MAX_PACKETSIZE = 2048;
 	
@@ -42,13 +41,16 @@ public class SPPSocket {
 	}
 	public SPPpacket getPacket()
 	{
+		SPPpacket p = null;
+		
 		do{
 			try
 			{
+				System.out.println("Waiting for expected packet..");
 				byte[] inBuffer = new byte[MAX_PACKETSIZE];
 				DatagramPacket recievePacket = new DatagramPacket(inBuffer, inBuffer.length);
 				socket.receive(recievePacket);
-				
+				System.out.println("Got datagram");
 				//Copies only the data received and removed the nulls 
 				byte[] data = new byte[recievePacket.getLength()];
 				for (int i = 0; i < data.length; i++) {
@@ -56,7 +58,7 @@ public class SPPSocket {
 				}
 				SPPpacket newPacket = new SPPpacket(data);
 				
-				if(packet.getChecksum() == packet.calculateChecksum()){
+				if(newPacket.getChecksum() == newPacket.calculateChecksum()){
 					System.out.println("The checksum matches.");
 					
 					client.recievePacket(newPacket);
@@ -67,22 +69,26 @@ public class SPPSocket {
 					server.Send(newerpacket);
 					System.out.println("The following acknr has been sent: " + newerpacket);
 					
-				if(newPacket.isAck())
-				{
-					server.OnAckRecieved(newPacket.getAcknr());
-					System.out.println("newPacket.isAck = " + newPacket.isAck() + " OnAckRecieved is executed with ackNr = " + newPacket.getAcknr());
-				}
+					if(newPacket.isAck())
+					{
+						server.OnAckRecieved(newPacket.getAcknr());
+						System.out.println("newPacket.isAck = " + newPacket.isAck() + " OnAckRecieved is executed with ackNr = " + newPacket.getAcknr());
+					}
 			}
+				else
+				{
+					System.out.println("The checksum didnt match!");
+				}
 		}
 		catch(IOException e)
 		{
 			System.out.println("Unable to get packet");
 			e.printStackTrace();
 		}
-		return null;
-	}
-		while(client.getNextPacket()!= null);
+	}while((p = client.getNextPacket())!= null);
 	
+	System.out.println("Returned packet " + p);
+	return p;
 		
 	}
 
