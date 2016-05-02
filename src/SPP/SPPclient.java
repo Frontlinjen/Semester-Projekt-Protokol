@@ -75,11 +75,6 @@ public class SPPclient {
 			addPacketToBuffer(p);	
 	}
 	
-	public void sendACK(int ack)
-	{
-		
-	}	
-	
 	public void setSeqNr(int seqnr){
 		this.expectedSeq = seqnr;
 	}
