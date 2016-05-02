@@ -33,6 +33,9 @@ public class SPPSocket {
 	{
 		server.Send(p);
 	}
+	public void setClientSeqNr(int seqnr){
+		client.setSeqNr(seqnr);
+	}
 	public SPPpacket getPacket()
 	{
 		do{

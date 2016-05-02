@@ -16,6 +16,11 @@ public class SPPPacketTest {
 		DatagramSocket socket = new DatagramSocket(32000);
 		SPPpacket spp = new SPPpacket();
 		spp.setData("Test".getBytes());
+		spp.setAck();
+		spp.setSyn();
+		spp.setFin();
+		spp.setRst();
+		System.out.println(spp.toString());
 		byte[] data = spp.getByteStream();
 		DatagramPacket packet = new DatagramPacket(data, data.length);
 		packet.setPort(33000);
@@ -49,6 +54,7 @@ class Server extends Thread{
 				System.out.print("\n");
 				String s = new String(p.getData());
 				System.out.println(s);
+				System.out.println(p.toString());
 			} catch (SocketException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
