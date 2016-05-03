@@ -32,7 +32,17 @@ public class LinkedList<T> {
 		
 		
 	}
-	
+	public int length()
+	{
+		int count = 0;
+		Node<T> node = getHead();
+		while(node!=null)
+		{
+			++count;
+			node = node.getPrev();
+		}
+		return count;
+	}
 	Node<T> get(int index)
 	{
 		Node<T> n = head;
