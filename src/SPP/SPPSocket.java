@@ -15,7 +15,7 @@ public class SPPSocket {
 	public SPPSocket(DatagramSocket s, int remotePort, InetAddress address, int clientSeq)
 	{
 		socket = s;
-		server = new SPPserver(address, remotePort, s, 0);
+		server = new SPPserver(address, remotePort, s, (int)(Math.random()*Integer.MAX_VALUE));
 		client = new SPPclient(clientSeq);
 	}
 
@@ -57,23 +57,23 @@ public class SPPSocket {
 					data[i] = inBuffer[i];
 				}
 				SPPpacket newPacket = new SPPpacket(data);
-
+				System.out.println("PACKET RECIEVED: " + newPacket);
 				if(newPacket.getChecksum() == newPacket.calculateChecksum()){
 					System.out.println("The checksum matches.");
 
 					client.recievePacket(newPacket);
 
-					SPPpacket newerpacket = new SPPpacket(data);
-					newerpacket.setAck();
-					newerpacket.setAcknr(newPacket.getSeqnr());
-					server.Send(newerpacket);
+					SPPpacket ackPacket = new SPPpacket();
+					ackPacket.setAck();
+					ackPacket.setAcknr(newPacket.getSeqnr());
+					server.Send(ackPacket);
 					
-					System.out.println("The following acknr has been sent: " + newerpacket);
+					System.out.println("The following acknr has been sent: " + ackPacket.getAcknr());
 
 					if(newPacket.isAck())
 					{
 						server.OnAckRecieved(newPacket.getAcknr());
-						System.out.println("newPacket.isAck = " + newPacket.isAck() + " OnAckRecieved is executed with ackNr = " + newPacket.getAcknr());
+						System.out.println("The following acknr has been recieved:" + newPacket.getAcknr());
 					}
 				}
 				else

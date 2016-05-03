@@ -17,6 +17,9 @@ public class SPPclient {
 	int expectedSeq = 0;
 	DatagramSocket socket = null;
 	SPPpacket packet = new SPPpacket();
+	
+	//First packet recieved should set the seqnr used for the connection
+	boolean setSeq = true;
 
 	public SPPclient(int startSeq)
 	{
@@ -31,12 +34,23 @@ public class SPPclient {
 		}
 		SPPpacket p = buffer.getTail().getKey();
 		System.out.println("Got packet: " + p.getSeqnr() + " Expected: " + expectedSeq);
-		//if(p.getSeqnr() == expectedSeq){
+		if(p.getSeqnr() < expectedSeq)
+		{
+			System.out.println("Recieved packet already recieved.. discarding");
+		}
+		else if(p.getSeqnr() == expectedSeq || setSeq){
 			buffer.remove(buffer.getTail());
+			if(setSeq)
+			{
+				expectedSeq = p.getSeqnr();
+				setSeq = false;
+			}
+			
 			expectedSeq += p.getData().length + 1;
+			
 			return p;
-		//}
-		//return null;
+		}
+		return null;
 	}
 	private void addPacketToBuffer(SPPpacket packet)
 	{

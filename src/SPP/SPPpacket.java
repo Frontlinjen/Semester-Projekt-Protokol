@@ -13,7 +13,7 @@ public class SPPpacket {
 	public byte[] getByteStream(){
 		ByteBuffer b = ByteBuffer.allocate(11 /*length of our header*/ + data.length);
 		b.putInt(seqnr);
-		b.putInt(0);
+		b.putInt(acknr);
 		short checksum = calculateChecksum();
 		b.putShort(checksum);
 		b.put(flags);
@@ -97,7 +97,7 @@ public class SPPpacket {
 	}
 	
 	public String toString(){
-		String s = new String("Flags: \n Ack: " + isAck() + getAcknr() + ", Syn: " + isSyn() + ", Rst: " + isRst() + ", Fin: " + isFin() + ", Seqnr: " + getSeqnr() + ", Length: " + data.length);
+		String s = new String("Flags: Ack: " + isAck() + ", Syn: " + isSyn() + ", Rst: " + isRst() + ", Fin: " + isFin() + ", Seqnr: " + getSeqnr() + ", Acknr: " + getAcknr() + ", Length: " + data.length);
 		return s;
 	}
 }

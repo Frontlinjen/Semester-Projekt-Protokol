@@ -18,7 +18,7 @@ public class SPPSocketTest {
 		ClientSocket socket = new ClientSocket("localhost", 33000);
 		socket.connect();
 		socket.sendData("Test".getBytes());
-				
+		socket.sendData("Test2".getBytes());		
 	}
 	
 
@@ -29,8 +29,11 @@ class Server2 extends Thread{
 	public void run() {
 				ServerSocket server = new ServerSocket(33000);
 				server.connect();
-				byte[] dat = server.getData();
-				System.out.println("Test result: " + new String(dat));
+				while(true)
+				{
+					byte[] dat = server.getData();
+					System.out.println("Test result: " + new String(dat));
+				}
 		
 	}
 	

@@ -26,19 +26,21 @@ class SPPTimeout extends TimerTask
 }
 class SeqTimerTuple
 {
+	private int seq;
+	private TimerTask task;
 	public SeqTimerTuple(int seq, TimerTask task)
 	{
 		this.seq = seq;
 		this.task = task;
 	}
-	int seq;
+	
 	public int getSeq() {
 		return seq;
 	}
 	public TimerTask getTask() {
 		return task;
 	}
-	TimerTask task;
+	
 }
 
 public class SPPserver {
@@ -69,9 +71,10 @@ public class SPPserver {
 			TimerTask timeout = new SPPTimeout(dp, this);
 			SeqTimerTuple tuple = new SeqTimerTuple(data.getSeqnr(), timeout);
 			outBuffer.insert(tuple);
+			System.out.println("SENDING PACKET: " + data);
 			//Sends the packet right away, then every 100th ms until an ACK is recieved 
 			timeoutScheduler.scheduleAtFixedRate(timeout, 0, 10000);
-			currentSeq += data.getData().length;
+			currentSeq += data.getData().length +1;
 			System.out.println("package: " + data.getSeqnr() + " has been sent");
 			
 	}
@@ -86,24 +89,25 @@ public class SPPserver {
 	}
 	public void OnAckRecieved(int ack)
 	{
+		
 		Node<SeqTimerTuple> node = outBuffer.getHead();
 		while(node!=null)
 		{
 			SeqTimerTuple obj = node.getKey()  ;
-			if(obj.seq==ack)
+			if(obj.getSeq()==ack)
 			{
-				obj.task.cancel();
+				obj.getTask().cancel();
 				outBuffer.remove(node);
-				System.out.println("Retransmission of node " + obj.seq + " ended!");
+				System.out.println("Retransmission of node " + obj.getSeq() + " ended! Now waiting for ack for: " + outBuffer.length());
 				
 				// 1 in 20 chance of removing depricated tasks from the list
-				if((Math.random()*20)==10)
+				if((int)(Math.random()*20)==10)
 					timeoutScheduler.purge();
 				return;
 			}
 			node = node.getPrev();
 		}
-		System.out.println("Non-matching seq recieved! " + ack);
+		System.out.println("Non-matching ack recieved! " + ack);
 		
 		
 	}
