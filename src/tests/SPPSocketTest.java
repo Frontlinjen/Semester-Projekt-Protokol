@@ -17,7 +17,9 @@ public class SPPSocketTest {
 		(new Server2()).start();
 		ClientSocket socket = new ClientSocket("localhost", 33000);
 		socket.connect();
+		System.out.println("!!!! SENDING TEST !!!!");
 		socket.sendData("Test".getBytes());
+		System.out.println("!!!! SENDING TEST2 !!!!");
 		socket.sendData("Test2".getBytes());		
 	}
 	

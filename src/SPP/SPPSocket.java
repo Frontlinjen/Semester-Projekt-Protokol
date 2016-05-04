@@ -28,12 +28,12 @@ public class SPPSocket {
 	{
 		SPPpacket newPacket = new SPPpacket();
 		newPacket.setData(data);
-		sendPacket(newPacket);
+		sendPacket(newPacket, true);
 		System.out.println("The data has been sent.");
 	}
-	public void sendPacket(SPPpacket p)
+	public void sendPacket(SPPpacket p, boolean retransmit)
 	{
-		server.Send(p);
+		server.Send(p, retransmit);
 		System.out.println("the following packet has been sent: " + p.getSeqnr());
 	}
 	public void setClientSeqNr(int seqnr){
@@ -59,21 +59,23 @@ public class SPPSocket {
 				SPPpacket newPacket = new SPPpacket(data);
 				System.out.println("PACKET RECIEVED: " + newPacket);
 				if(newPacket.getChecksum() == newPacket.calculateChecksum()){
-					System.out.println("The checksum matches.");
 
 					client.recievePacket(newPacket);
 
-					SPPpacket ackPacket = new SPPpacket();
-					ackPacket.setAck();
-					ackPacket.setAcknr(newPacket.getSeqnr());
-					server.Send(ackPacket);
-					
-					System.out.println("The following acknr has been sent: " + ackPacket.getAcknr());
-
+					//No use to ack an ack, unless its an ACK SYN packet for 3-way handshake
 					if(newPacket.isAck())
 					{
 						server.OnAckRecieved(newPacket.getAcknr());
 						System.out.println("The following acknr has been recieved:" + newPacket.getAcknr());
+					}
+					if(!newPacket.isAck() || newPacket.isSyn()) //Replies to ACK-SYN
+					{
+					
+						SPPpacket ackPacket = new SPPpacket();
+						ackPacket.setAck();
+						ackPacket.setAcknr(newPacket.getSeqnr());
+						server.Send(ackPacket, false);
+						System.out.println("The following acknr has been sent: " + ackPacket.getAcknr());
 					}
 				}
 				else
@@ -86,9 +88,11 @@ public class SPPSocket {
 				System.out.println("Unable to get packet");
 				e.printStackTrace();
 			}
-		}while((p = client.getNextPacket())== null);
-
-		System.out.println("Returned packet " + p);
+			if(p!=null)
+				System.out.println("Length: " + p.getData().length);
+		}while(((p = client.getNextPacket())== null));
+		
+		System.out.println("Passing expected packet along..");
 		return p;
 
 	}

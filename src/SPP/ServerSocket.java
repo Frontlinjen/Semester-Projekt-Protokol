@@ -26,7 +26,13 @@ public class ServerSocket {
 	
 	public byte[] getData()
 	{
-		SPPpacket p = connection.getPacket();
+		
+		SPPpacket p;
+		do
+		{
+			 p = connection.getPacket();
+			 System.out.println(p.getData().length);
+		}while(p.getData().length==0);
 		return p.getData();
 	}
 	public void sendData(byte[] data)
@@ -60,6 +66,7 @@ public class ServerSocket {
 			newPacket = new SPPpacket(data);
 			System.out.println("SPPpacket made from the received packet");
 			//If not a syn packet, ask them to try and reconnect!
+			System.out.println("Waiting for syn...");
 			if(!newPacket.isSyn())
 			{
 				System.out.println("Recieved non-syn packet");
@@ -81,12 +88,13 @@ public class ServerSocket {
 			packet.setAcknr(newPacket.getSeqnr());
 			packet.setSyn();
 			//Sends SYN-ACK
-			connection.sendPacket(packet);
+			connection.sendPacket(packet, true);
 			System.out.println("Connection made and a packet is send with ack and syn");
 			
 			SPPpacket ackPacket;
 			do
 			{
+				System.out.println("Waiting for final ack packet in 3-way handshake..");
 				ackPacket = connection.getPacket();
 			}while(!ackPacket.isAck() || ackPacket.isRst());
 			

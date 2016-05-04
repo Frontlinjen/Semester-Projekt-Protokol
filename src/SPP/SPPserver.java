@@ -14,6 +14,12 @@ class SPPTimeout extends TimerTask
 {
 	SPPserver packetHandler;
 	DatagramPacket packet;
+	boolean cancel = false;
+	
+	public void cancelNextRun(boolean b)
+	{
+		cancel = b;
+	}
 	public SPPTimeout(DatagramPacket packet, SPPserver reference)
 	{
 		this.packet = packet;
@@ -21,14 +27,22 @@ class SPPTimeout extends TimerTask
 	}
 	@Override
 	public void run() {
-		packetHandler.OnPacketAckTimeOut(packet);
+		if(cancel)
+		{
+			this.cancel();
+		}
+		else
+		{
+			packetHandler.OnPacketAckTimeOut(packet);
+		}
+		
 	}
 }
 class SeqTimerTuple
 {
 	private int seq;
-	private TimerTask task;
-	public SeqTimerTuple(int seq, TimerTask task)
+	private SPPTimeout task;
+	public SeqTimerTuple(int seq, SPPTimeout task)
 	{
 		this.seq = seq;
 		this.task = task;
@@ -37,7 +51,7 @@ class SeqTimerTuple
 	public int getSeq() {
 		return seq;
 	}
-	public TimerTask getTask() {
+	public SPPTimeout getTask() {
 		return task;
 	}
 	
@@ -61,20 +75,28 @@ public class SPPserver {
 		this.socket = socket;
 	}
 	
-	public void Send(SPPpacket data){
+	public void Send(SPPpacket data, boolean retransmit){
 			data.setSeqnr(currentSeq);
 			byte[] packetBytes = data.getByteStream();
 			//Increase the seq to match the next packet
 			
 			
 			DatagramPacket dp = new DatagramPacket(packetBytes, packetBytes.length, dstIP, remotePort);
-			TimerTask timeout = new SPPTimeout(dp, this);
-			SeqTimerTuple tuple = new SeqTimerTuple(data.getSeqnr(), timeout);
-			outBuffer.insert(tuple);
-			System.out.println("SENDING PACKET: " + data);
-			//Sends the packet right away, then every 100th ms until an ACK is recieved 
-			timeoutScheduler.scheduleAtFixedRate(timeout, 0, 10000);
+			if(retransmit)
+			{
+				SPPTimeout timeout = new SPPTimeout(dp, this);
+				SeqTimerTuple tuple = new SeqTimerTuple(data.getSeqnr(), timeout);
+				outBuffer.insert(tuple);
+				
+				System.out.println("SENDING PACKET: " + data);
+				//Sends the packet right away, then every 100th ms until an ACK is recieved 
+				timeoutScheduler.scheduleAtFixedRate(timeout, 10000, 10000);
+				
+			}
 			currentSeq += data.getData().length +1;
+			SendPacket(dp);
+			
+			
 			System.out.println("package: " + data.getSeqnr() + " has been sent");
 			
 	}
@@ -96,7 +118,7 @@ public class SPPserver {
 			SeqTimerTuple obj = node.getKey()  ;
 			if(obj.getSeq()==ack)
 			{
-				obj.getTask().cancel();
+				obj.getTask().cancelNextRun(true);
 				outBuffer.remove(node);
 				System.out.println("Retransmission of node " + obj.getSeq() + " ended! Now waiting for ack for: " + outBuffer.length());
 				
@@ -113,6 +135,7 @@ public class SPPserver {
 	}
 	public void OnPacketAckTimeOut(DatagramPacket dp){
 		//Resends packet
+		System.out.println("Retransmitting packet: " + new SPPpacket(dp.getData()));
 		this.SendPacket(dp);
 	}
 }

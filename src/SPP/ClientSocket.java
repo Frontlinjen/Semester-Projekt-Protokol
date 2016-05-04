@@ -35,7 +35,12 @@ public class ClientSocket {
 		
 		public byte[] getData()
 		{
-			SPPpacket p = connection.getPacket();
+			SPPpacket p;
+			do
+			{
+				 p = connection.getPacket();
+				 System.out.println(p.getData().length);
+			}while(p.getData().length==0); //Skip control packages
 			return p.getData();
 		}
 		public void sendData(byte[] data)
@@ -50,10 +55,11 @@ public class ClientSocket {
 				SPPpacket packet = new SPPpacket();
 				packet.setSyn();
 				packet.setSeqnr((int)Math.random()%Integer.MAX_VALUE);
-				clientSocket.sendPacket(packet);
-				System.out.println("Venter p� ACKSYN");
+				clientSocket.sendPacket(packet, true);
+				
 				SPPpacket Acknr;
 				do{
+					System.out.println("Venter p� ACKSYN");
 					Acknr = clientSocket.getPacket();
 				}while(!Acknr.isSyn() || Acknr.isRst());
 				

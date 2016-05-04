@@ -45,7 +45,7 @@ public class SPPclient {
 				expectedSeq = p.getSeqnr();
 				setSeq = false;
 			}
-			
+			System.out.println("Returned expected packet: " + p);
 			expectedSeq += p.getData().length + 1;
 			
 			return p;
