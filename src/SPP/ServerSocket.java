@@ -66,7 +66,7 @@ public class ServerSocket {
 			newPacket = new SPPpacket(data);
 			System.out.println("SPPpacket made from the received packet");
 			//If not a syn packet, ask them to try and reconnect!
-			System.out.println("Waiting for syn...");
+			System.out.println("Checking for syn...");
 			if(!newPacket.isSyn())
 			{
 				System.out.println("Recieved non-syn packet");
@@ -97,6 +97,7 @@ public class ServerSocket {
 				System.out.println("Waiting for final ack packet in 3-way handshake..");
 				ackPacket = connection.getPacket();
 			}while(!ackPacket.isAck() || ackPacket.isRst());
+			
 			
 			//Resets connection
 			if(ackPacket.isRst())

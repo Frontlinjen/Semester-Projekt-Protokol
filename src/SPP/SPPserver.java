@@ -69,6 +69,7 @@ public class SPPserver {
 	
 	public SPPserver(InetAddress ip, int remotePort, DatagramSocket socket, int startSeq)
 	{
+		System.out.println("Server started with SeqID: " + startSeq);
 		currentSeq = startSeq;
 		dstIP = ip;
 		this.remotePort = remotePort;
@@ -77,9 +78,7 @@ public class SPPserver {
 	
 	public void Send(SPPpacket data, boolean retransmit){
 			data.setSeqnr(currentSeq);
-			byte[] packetBytes = data.getByteStream();
-			//Increase the seq to match the next packet
-			
+			byte[] packetBytes = data.getByteStream();			
 			
 			DatagramPacket dp = new DatagramPacket(packetBytes, packetBytes.length, dstIP, remotePort);
 			if(retransmit)
@@ -93,11 +92,12 @@ public class SPPserver {
 				timeoutScheduler.scheduleAtFixedRate(timeout, 10000, 10000);
 				
 			}
+			System.out.println("package: " + data.getSeqnr() + " has been sent");
 			currentSeq += data.getData().length +1;
 			SendPacket(dp);
 			
 			
-			System.out.println("package: " + data.getSeqnr() + " has been sent");
+			
 			
 	}
 	private void SendPacket(DatagramPacket dp)

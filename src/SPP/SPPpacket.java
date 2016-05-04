@@ -97,7 +97,7 @@ public class SPPpacket {
 	}
 	
 	public String toString(){
-		String s = new String("Flags: Ack: " + isAck() + ", Syn: " + isSyn() + ", Rst: " + isRst() + ", Fin: " + isFin() + ", Seqnr: " + getSeqnr() + ", Acknr: " + getAcknr() + ", Length: " + data.length);
+		String s = new String("Flags: Ack: " + isAck() + ", Syn: " + isSyn() + ", Rst: " + isRst() + ", Fin: " + isFin() + ", Seqnr: " + getSeqnr() + ", Acknr: " + getAcknr() + ", Length: " + data.length + ", Data: " + new String(data));
 		return s;
 	}
 }
