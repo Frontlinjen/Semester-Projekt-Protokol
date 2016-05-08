@@ -75,7 +75,10 @@ public class SPPserver {
 		this.remotePort = remotePort;
 		this.socket = socket;
 	}
-	
+	public void stopTimers()
+	{
+		timeoutScheduler.cancel();
+	}
 	public void Send(SPPpacket data, boolean retransmit){
 			data.setSeqnr(currentSeq);
 			byte[] packetBytes = data.getByteStream();			

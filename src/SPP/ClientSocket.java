@@ -9,10 +9,6 @@ import SPP.SPPSocket;
 
 public class ClientSocket {
 	
-	//SYN til ipadresse, indtil den får SYNACK tilbage, derefter skal den oprette en
-		//SPP socket så den kan snakke med serveren.
-		
-		DatagramSocket socket = null;
 		SPPSocket connection = null;
 		int remotePort;
 		InetAddress remoteIp;
@@ -33,8 +29,10 @@ public class ClientSocket {
 			return connection!=null;
 		}
 		
-		public byte[] getData()
+		public byte[] getData() throws Exception
 		{
+			if(!isConnected())
+				throw new Exception("Not connected");
 			SPPpacket p;
 			do
 			{
@@ -43,8 +41,10 @@ public class ClientSocket {
 			}while(p.getData().length==0); //Skip control packages
 			return p.getData();
 		}
-		public void sendData(byte[] data)
+		public void sendData(byte[] data) throws Exception
 		{
+			if(!isConnected())
+				throw new Exception("Not connected");
 			connection.sendData(data);
 		}
 		
@@ -75,6 +75,7 @@ public class ClientSocket {
 		}
 		
 		public void shutdown(){
-			socket.close();
+			connection.shutdown();
+			connection = null;
 		}
 }

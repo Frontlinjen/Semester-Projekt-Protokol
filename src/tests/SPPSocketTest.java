@@ -18,11 +18,23 @@ public class SPPSocketTest {
 		ClientSocket socket = new ClientSocket("localhost", 33000);
 		socket.connect();
 		System.out.println("!!!! SENDING TEST !!!!");
-		socket.sendData("Hi server!".getBytes());
-		while(true)
+		try
 		{
-			byte[] dat = socket.getData();
-			System.out.println("Client result: " + new String(dat));
+			socket.sendData("Hi server!".getBytes());
+			while(socket.isConnected())
+			{
+				byte[] dat = socket.getData();
+				String result = new String(dat);
+				System.out.println("Client result: " + result);
+				if(result.equals("Hi client!"))
+				{
+					socket.shutdown();
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			System.out.println("Disconnected..");
 		}
 	}
 	
@@ -34,11 +46,18 @@ class Server2 extends Thread{
 	public void run() {
 				ServerSocket server = new ServerSocket(33000);
 				server.connect();
-				server.sendData("Hi client!".getBytes());
-				while(true)
+				try
 				{
-					byte[] dat = server.getData();
-					System.out.println("Server result: " + new String(dat));
+					server.sendData("Hi client!".getBytes());
+					while(server.isConnected())
+					{
+						byte[] dat = server.getData();
+						System.out.println("Server result: " + new String(dat));
+					}
+				}
+				catch(Exception e)
+				{
+					System.out.println("Disconnected..");
 				}
 		
 	}

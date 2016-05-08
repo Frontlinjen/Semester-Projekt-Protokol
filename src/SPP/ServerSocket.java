@@ -24,9 +24,10 @@ public class ServerSocket {
 		return connection!=null;
 	}
 	
-	public byte[] getData()
+	public byte[] getData() throws Exception
 	{
-		
+		if(!isConnected())
+			throw new Exception("Not connected");
 		SPPpacket p;
 		do
 		{
@@ -35,9 +36,11 @@ public class ServerSocket {
 		}while(p.getData().length==0);
 		return p.getData();
 	}
-	public void sendData(byte[] data)
+	public void sendData(byte[] data) throws Exception
 	{
-		connection.sendData(data);
+		if(!isConnected())
+			throw new Exception("Not connected");
+			connection.sendData(data);
 	}
 	
 	
@@ -113,7 +116,9 @@ public class ServerSocket {
 	}
 	
 	public void shutdown(){
-		socket.close();
+		//this will also shutdown the socket
+		connection.shutdown();
+		connection = null;
 	}
 	
 }

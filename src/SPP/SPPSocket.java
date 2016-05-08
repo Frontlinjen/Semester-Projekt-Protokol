@@ -59,7 +59,12 @@ public class SPPSocket {
 				SPPpacket newPacket = new SPPpacket(data);
 				System.out.println("PACKET RECIEVED: " + newPacket);
 				if(newPacket.getChecksum() == newPacket.calculateChecksum()){
-
+					if(newPacket.isFin())
+					{
+						System.out.println("Fin request recieved.. shutting down");
+						shutdown();
+					}
+					
 					client.recievePacket(newPacket);
 
 					//No use to ack an ack, unless its an ACK SYN packet for 3-way handshake
@@ -68,6 +73,7 @@ public class SPPSocket {
 						server.OnAckRecieved(newPacket.getAcknr());
 						System.out.println("The following acknr has been recieved:" + newPacket.getAcknr());
 					}
+					
 					if(!newPacket.isAck() || newPacket.isSyn()) //Replies to ACK-SYN
 					{
 					
@@ -98,7 +104,13 @@ public class SPPSocket {
 	}
 	
 	public void shutdown(){
+		SPPpacket Fin = new SPPpacket();
+		Fin.setFin();
+		server.Send(Fin, false);
+		server.stopTimers();
 		socket.close();
+		server = null;
+		client = null;
 	}
 
 }
