@@ -61,6 +61,7 @@ public class SPPserver {
 	
 	Timer timeoutScheduler = new Timer();
 	int currentSeq = 0;
+	final int resendDelay = 10;
 	InetAddress dstIP;
 	int remotePort;
 	SPPpacket lastSentPacket;
@@ -92,7 +93,7 @@ public class SPPserver {
 				
 				System.out.println("SENDING PACKET: " + data);
 				//Sends the packet right away, then every 100th ms until an ACK is recieved 
-				timeoutScheduler.scheduleAtFixedRate(timeout, 10000, 10000);
+				timeoutScheduler.scheduleAtFixedRate(timeout, resendDelay, resendDelay);
 				
 			}
 			System.out.println("package: " + data.getSeqnr() + " has been sent");
